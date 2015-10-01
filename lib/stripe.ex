@@ -49,9 +49,9 @@ defmodule Stripe do
   Returns dict
   """
   def make_request(method, endpoint, body \\ [], headers \\ [], options \\ []) do
-    rb = Enum.map(body, &url_encode_keyvalue(&1))
-      |> Enum.join("&")
-
+    # rb = Enum.map(body, &url_encode_keyvalue(&1))
+    #   |> Enum.join("&")
+    rb = Stripe.URI.encode_query(body)
     rh = req_headers
       |> Dict.merge(headers)
       |> Dict.to_list

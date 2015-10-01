@@ -85,7 +85,7 @@ defmodule Stripe.Customers do
   def create(params) do
     res = Stripe.make_request :post, @endpoint, params
     if res["object"] do
-      {:ok, Stripe.Customer.from_keyword res}
+      {:ok, Stripe.Util.string_map_to_atoms res}
     else
       {:error, res["error"]["message"]}
     end
@@ -97,7 +97,8 @@ defmodule Stripe.Customers do
     if(res["error"]) do
       {:error, res["error"]["message"]}
     else
-      {:ok, Stripe.Customer.from_keyword res}
+      {:ok, Stripe.Util.string_map_to_atoms res}
+      #{:ok, Stripe.Customer.from_keyword res}
     end
   end
 
@@ -105,12 +106,20 @@ defmodule Stripe.Customers do
     res = Stripe.make_request :get, @endpoint
 
     if res["data"] do
-      customers = Enum.map res["data"], &Stripe.Customer.from_keyword(&1)
+      customers = Enum.map res["data"], &Stripe.Util.string_map_to_atoms &1
       {:ok, customers}
     else
       {:error, res["error"]["message"]}
     end
   end
 
+  def delete(id) do
+    res = Stripe.make_request :delete, "#{@endpoint}/#{id}"
+    if res["deleted"] do
+      {:ok, %{:success => true}}
+    else
+      {:error, res["error"]["message"]}
+    end
+  end
 
 end
