@@ -7,25 +7,25 @@ defmodule Stripe.Customer do
   - `livemode` - `Boolean`
   - `cards` - `List`
   - `created` - `Tuple`
-  - `account_balance` - `Integer` - Current balance, if any, being stored on the 
-      customer’s account. If negative, the customer has credit to apply to the 
-      next invoice. If positive, the customer has an amount owed that will be 
-      added to the next invoice. The balance does not refer to any unpaid 
-      invoices; it solely takes into account amounts that have yet to be 
-      successfully applied to any invoice. This balance is only taken into 
+  - `account_balance` - `Integer` - Current balance, if any, being stored on the
+      customer’s account. If negative, the customer has credit to apply to the
+      next invoice. If positive, the customer has an amount owed that will be
+      added to the next invoice. The balance does not refer to any unpaid
+      invoices; it solely takes into account amounts that have yet to be
+      successfully applied to any invoice. This balance is only taken into
       account for recurring charges.
-  - `currency` - `String` - The currency the customer can be charged in for 
+  - `currency` - `String` - The currency the customer can be charged in for
       recurring billing purposes (subscriptions, invoices, invoice items).
-  - `default_card` - `String` - ID of the default credit card attached to the 
+  - `default_card` - `String` - ID of the default credit card attached to the
       customer
-  - `delinquent` - `Boolean` - Whether or not the latest charge for the 
+  - `delinquent` - `Boolean` - Whether or not the latest charge for the
       customer’s latest invoice has failed
   - `description` - `String`
-  - `discount` - `Stripe.Discount` - Describes the current discount active on 
+  - `discount` - `Stripe.Discount` - Describes the current discount active on
       the customer, if there is one.
   - `email` - `String`
-  - `metadata` - `Keyword` - Keyword A set of key/value pairs that you can 
-      attach to a charge object. It can be useful for storing additional 
+  - `metadata` - `Keyword` - Keyword A set of key/value pairs that you can
+      attach to a charge object. It can be useful for storing additional
       information about the charge in a structured format.
   - `subscriptions` - `List` - The customer’s current subscriptions, if any
   """
@@ -78,21 +78,21 @@ defmodule Stripe.Customer do
   }
 
   def from_keyword(data) do
-    datetime = Stripe.Util.datetime_from_timestamp data[:created]
-    %Stripe.Customer{
-      id: data[:id],
-      object: data[:object],
-      cards: data[:cards],
+    datetime = Stripe.Util.datetime_from_timestamp data["created"]
+    customer = %Stripe.Customer{
+      id: data["id"],
+      object: data["object"],
+      cards: data["cards"],
       created: datetime,
-      account_balance: data[:account_balance],
-      currency: data[:currency],
-      default_card: data[:default_card],
-      delinquent: data[:delinquent],
-      description: data[:description],
-      discount: data[:discount],
-      email: data[:email],
-      metadata: data[:metadata],
-      subscriptions: data[:subscriptions]
+      account_balance: data["account_balance"],
+      currency: data["currency"],
+      default_card: data["default_card"],
+      delinquent: data["delinquent"],
+      description: data["description"],
+      discount: data["discount"],
+      email: data["email"],
+      metadata: data["metadata"],
+      subscriptions: Stripe.Util.string_map_to_atoms data["subscriptions"]["data"]
     }
   end
 end

@@ -13,4 +13,10 @@ defmodule Stripe.Util do
   def datetime_from_timestamp(nil) do
     datetime_from_timestamp 0
   end
+  def string_map_to_atoms([string_key_map]) do
+    for {key, val} <- string_key_map, into: %{}, do: {String.to_atom(key), val}
+  end
+  def string_map_to_atoms(string_key_map) do
+    for {key, val} <- string_key_map, into: %{}, do: {String.to_atom(key), val}
+  end
 end

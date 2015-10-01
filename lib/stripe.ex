@@ -38,7 +38,7 @@ defmodule Stripe do
   Returns Record or ArgumentError
   """
   def process_response_body(body) do
-    JSEX.decode! body, [{:labels, :atom}]
+    Poison.decode! body
   end
 
   @doc """
@@ -51,11 +51,13 @@ defmodule Stripe do
   def make_request(method, endpoint, body \\ [], headers \\ [], options \\ []) do
     rb = Enum.map(body, &url_encode_keyvalue(&1))
       |> Enum.join("&")
+
     rh = req_headers
       |> Dict.merge(headers)
       |> Dict.to_list
 
-    response = case method do
+
+    {:ok, response} = case method do
       :get     -> get(     endpoint,     rh, options)
       :put     -> put(     endpoint, rb, rh, options)
       :head    -> head(    endpoint,     rh, options)
@@ -64,6 +66,7 @@ defmodule Stripe do
       :delete  -> delete(  endpoint,     rh, options)
       :options -> options( endpoint,     rh, options)
     end
+
 
     response.body
   end
@@ -78,7 +81,7 @@ defmodule Stripe do
   end
 
   defp url_encode_keyvalue({k, v}) do
-    key = Atom.to_string(k) 
+    key = Atom.to_string(k)
     "#{key}=#{v}"
   end
 end
