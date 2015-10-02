@@ -87,6 +87,8 @@ defmodule Stripe.Customers do
       |> Stripe.Util.handle_stripe_response
   end
 
+
+
   def get(id) do
     Stripe.make_request(:get, "#{@endpoint}/#{id}")
       |> Stripe.Util.handle_stripe_response
