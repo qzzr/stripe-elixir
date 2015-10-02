@@ -36,9 +36,23 @@ defmodule Stripe.CustomerTest do
     end
   end
 
+  test "Creating a subscription works", %{res: customer} do
+    case Stripe.Customers.create_subscription customer.id, plan: "mav-pilot" do
+      {:ok, sub} -> assert sub.id
+      {:error, err} -> flunk err
+    end
+  end
+
+  test "Listing subscriptions works", %{res: customer} do
+    case Stripe.Customers.get_subscriptions customer.id do
+      {:ok, subs} -> assert subs
+      {:error, err} -> flunk err
+    end
+  end
+
   test "Deleting a customer succeeds", %{res: customer} do
     case Stripe.Customers.delete customer.id do
-      {:ok, res} -> assert res.success
+      {:ok, res} -> assert res.deleted
       {:error, err} -> flunk err
     end
 

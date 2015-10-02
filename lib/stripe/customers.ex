@@ -83,43 +83,45 @@ defmodule Stripe.Customers do
   full card details when retrieving the customer.
   """
   def create(params) do
-    res = Stripe.make_request :post, @endpoint, params
-    if res["object"] do
-      {:ok, Stripe.Util.string_map_to_atoms res}
-    else
-      {:error, res["error"]["message"]}
-    end
+    res = Stripe.make_request(:post, @endpoint, params)
+      |> Stripe.Util.handle_stripe_response
   end
 
   def get(id) do
-    res = Stripe.make_request :get, "#{@endpoint}/#{id}"
-
-    if(res["error"]) do
-      {:error, res["error"]["message"]}
-    else
-      {:ok, Stripe.Util.string_map_to_atoms res}
-      #{:ok, Stripe.Customer.from_keyword res}
-    end
+    res = Stripe.make_request(:get, "#{@endpoint}/#{id}")
+      |> Stripe.Util.handle_stripe_response
   end
 
-  def list do
-    res = Stripe.make_request :get, @endpoint
+  def create_subscription(id, opts) do
+    res = Stripe.make_request(:post, "#{@endpoint}/#{id}/subscriptions", opts)
+      |> Stripe.Util.handle_stripe_response
+  end
 
-    if res["data"] do
-      customers = Enum.map res["data"], &Stripe.Util.string_map_to_atoms &1
-      {:ok, customers}
-    else
-      {:error, res["error"]["message"]}
-    end
+  def get_subcription(id, sub_id) do
+    res = Stripe.make_request(:get, "#{@endpoint}/#{id}/subscriptions/#{sub_id}")
+      |> Stripe.Util.handle_stripe_response
+  end
+
+  def cancel_subscription(id, sub_id) do
+    res = Stripe.make_request(:delete, "#{@endpoint}/#{id}/subscriptions/#{sub_id}")
+      |> Stripe.Util.handle_stripe_response
+
+  end
+
+  def get_subscriptions(id) do
+    res = Stripe.make_request(:get, "#{@endpoint}/#{id}/subscriptions")
+      |> Stripe.Util.handle_stripe_response
+
+  end
+
+  def list(limit \\ 10) do
+    res = Stripe.make_request(:get, "#{@endpoint}?limit=#{limit}")
+      |> Stripe.Util.handle_stripe_response
   end
 
   def delete(id) do
-    res = Stripe.make_request :delete, "#{@endpoint}/#{id}"
-    if res["deleted"] do
-      {:ok, %{:success => true}}
-    else
-      {:error, res["error"]["message"]}
-    end
+    res = Stripe.make_request(:delete, "#{@endpoint}/#{id}")
+      |> Stripe.Util.handle_stripe_response
   end
 
 end
