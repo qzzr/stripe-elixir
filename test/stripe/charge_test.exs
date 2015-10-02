@@ -1,8 +1,7 @@
 defmodule Stripe.ChargeTest do
   use ExUnit.Case
 
-  test "A valid charge is successful with card as source" do
-
+  setup do
     params = [
       source: [
         object: "card",
@@ -13,9 +12,13 @@ defmodule Stripe.ChargeTest do
         name: "Ducky Test",
         cvc: 123
       ],
-      description: "1000 Widgets",
-      capture: false
+      description: "1000 Widgets"
     ]
+    {:ok, [params: params]}
+  end
+
+  test "A valid charge is successful with card as source", %{params: params} do
+
     case Stripe.Charges.create(1000,params) do
       {:ok, res} -> assert res.id
       {:error, err} -> flunk err
@@ -37,19 +40,28 @@ defmodule Stripe.ChargeTest do
     end
   end
 
-  test "Capturing a charge" do
-    {:ok,[first | _]} = Stripe.Charges.list()
-    case Stripe.Charges.capture(first.id) do
-      {:ok, charge} -> assert charge.id == first.id
+  test "Capturing a charge", %{params: params} do
+    params = Keyword.put_new params, :capture, false
+    {:ok, charge} = Stripe.Charges.create(1000,params)
+    case Stripe.Charges.capture(charge.id) do
+      {:ok, captured} -> assert captured.id == charge.id
       {:error, err} -> flunk err
     end
   end
-  
-  test "Changing a charge" do
-    {:ok,[first | _]} = Stripe.Charges.list()
+
+  test "Changing a charge", %{params: params} do
+    {:ok, charge} = Stripe.Charges.create(1000,params)
     params = [description: "Changed charge"]
-    case Stripe.Charges.change(first.id, params) do
-      {:ok, charge} -> assert charge.description == "Changed charge"
+    case Stripe.Charges.change(charge.id, params) do
+      {:ok, changed} -> assert changed.description == "Changed charge"
+      {:error, err} -> flunk err
+    end
+  end
+
+  test "Refunding a charge", %{params: params} do
+    {:ok, charge} = Stripe.Charges.create(1000,params)
+    case Stripe.Charges.refund_partial(charge.id,500) do
+      {:ok, refunded} -> assert refunded.amount == 500
       {:error, err} -> flunk err
     end
   end

@@ -113,4 +113,14 @@ defmodule Stripe.Charges do
       |> Stripe.Util.handle_stripe_response
   end
 
+  def refund(id) do
+    Stripe.make_request(:post, "#{@endpoint}/#{id}/refunds")
+      |> Stripe.Util.handle_stripe_response
+  end
+
+  def refund_partial(id, amount) do
+    params = [amount: amount]
+    Stripe.make_request(:post, "#{@endpoint}/#{id}/refunds", params)
+      |> Stripe.Util.handle_stripe_response
+  end
 end
