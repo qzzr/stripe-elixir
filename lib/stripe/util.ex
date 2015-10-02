@@ -17,7 +17,7 @@ defmodule Stripe.Util do
   end
 
   def string_map_to_atoms([string_key_map]) do
-    for {key, val} <- string_key_map, into: %{}, do: {String.to_atom(key), val}
+    string_map_to_atoms string_key_map
   end
 
   def string_map_to_atoms(string_key_map) do
