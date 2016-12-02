@@ -1,3 +1,6 @@
+# WARNING, DON'T USE THIS LIB! #
+We are using this because the original repo was deleted.  We need this one downloadable while we rewrite using a different library.  If you want the orignal, check out [strip-elixir](https://github.com/slogsdon/stripe-elixir).
+
 # stripe-elixir
 
 a Stripe wrapper for Elixir
