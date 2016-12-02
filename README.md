@@ -10,7 +10,7 @@ a Stripe wrapper for Elixir
 Add the following to your dependencies in your mix file:
 
 ```elixir
-{ :stripe, github: "slogsdon/stripe-elixir" }
+{ :stripe, github: "movementventures/stripe-elixir" }
 ```
 
 > ##### Note
